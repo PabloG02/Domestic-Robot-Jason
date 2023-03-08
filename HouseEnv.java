@@ -16,6 +16,7 @@ public class HouseEnv extends Environment {
     public static final Literal af = Literal.parseLiteral("at(robot,fridge)");
     public static final Literal ao = Literal.parseLiteral("at(robot,owner)");
     public static final Literal ap = Literal.parseLiteral("at(robot,pickup)");
+    public static final Literal ab = Literal.parseLiteral("at(robot,base)");
 
     static Logger logger = Logger.getLogger(HouseEnv.class.getName());
 
@@ -52,12 +53,15 @@ public class HouseEnv extends Environment {
         if (lRobot.equals(model.lPickUp)) {
             addPercept("robot", ap);
         }
+        if (lRobot.equals(model.lBaseRobot)) {
+            addPercept("robot", ab);
+        }
 
         // add beer "status" the percepts
         if (model.fridgeOpen) {
             addPercept("robot", Literal.parseLiteral("stock(beer,"+model.availableBeers+")"));
         }
-		
+
         if (model.sipCount > 0) {
             addPercept("robot", hob);
             addPercept("owner", hob);
@@ -69,13 +73,13 @@ public class HouseEnv extends Environment {
     public boolean executeAction(String ag, Structure action) {
         System.out.println("["+ag+"] doing: "+action);
         boolean result = false;
-        if (action.equals(of)) { // of = open(fridge)
+        if (action.equals(of) && ag.equals("robot")) { // of = open(fridge)
             result = model.openFridge();
 
-        } else if (action.equals(clf)) { // clf = close(fridge)
+        } else if (action.equals(clf) && ag.equals("robot")) { // clf = close(fridge)
             result = model.closeFridge();
 
-        } else if (action.getFunctor().equals("move_towards")) {
+        } else if (action.getFunctor().equals("move_towards") && ag.equals("robot")) {
             String l = action.getTerm(0).toString();
             Location dest = null;
             boolean adjacent = false;
@@ -87,6 +91,8 @@ public class HouseEnv extends Environment {
                 adjacent = true;
             } else if (l.equals("pickup")) {
                 dest = model.lPickUp;
+            } else if (l.equals("base")) {
+                dest = model.lBaseRobot;
             }
 
             try {

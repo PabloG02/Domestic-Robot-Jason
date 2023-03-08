@@ -1,30 +1,37 @@
+/* Initial beliefs and rules */
+
 /* Initial goals */
 
-!get(beer).   // initial goal: get a beer
-!check_bored. // initial goal: verify whether I am getting bored
+!drink(beer).   
 
-+!get(beer) : true
-   <- .send(robot, achieve, bring(owner,beer)).
+/* Plans */
 
-+has(owner,beer) : true
-   <- !drink(beer).
--has(owner,beer) : true
-   <- !get(beer).
++!drink(beer) : not has(owner,beer) & not asked(beer) <-
+    .println("Owner no tiene cerveza.");
+    !get(beer);
+    !drink(beer).
++!drink(beer) : not has(owner,beer) & asked(beer) <- 
+    .println("Owner está esperando una cerveza.");
+    .wait(5000);
+    !drink(beer).
++!drink(beer) : has(owner,beer) & asked(beer) <-
+    .println("Owner va a empezar a beber cerveza.");
+    -asked(beer);
+    sip(beer);
+    !drink(beer).
++!drink(beer) : has(owner,beer) & not asked(beer) <-
+    sip(beer);
+    .println("Owner está bebiendo cerveza.");
+    !drink(beer).
++!drink(beer) : ~couldDrink(beer) <-
+    .println("Owner ha bebido demasiado por hoy.").    
+    
++!get(beer) : not asked(beer) <-
+    .send(robot, achieve, bring(owner,beer));
+    .println("Owner ha pedido una cerveza al robot.");
+    +asked(beer).
 
-// if I have not beer finish, in other case while I have beer, sip
-+!drink(beer) : not has(owner,beer)
-   <- true.
-+!drink(beer) //: has(owner,beer)
-   <- sip(beer);
-     !drink(beer).
-
-+!check_bored : true
-   <- .random(X); .wait(X*5000+2000);   // i get bored at random times
-      .send(robot, askOne, time(_), R); // when bored, I ask the robot about the time
-      .print(R);
-      !check_bored.
-
-+msg(M)[source(Ag)] : true
-   <- .print("Message from ",Ag,": ",M);
-      -msg(M).
-
++msg(M)[source(Ag)] <- 
+    .print("Message from ",Ag,": ",M);
+    +~couldDrink(beer);
+    -msg(M).

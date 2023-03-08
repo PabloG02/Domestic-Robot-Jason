@@ -25,15 +25,17 @@ public class HouseView extends GridWorldView {
         super.drawAgent(g, x, y, Color.lightGray, -1);
         switch (object) {
         case HouseModel.FRIDGE:
+            super.drawAgent(g, x, y, Color.cyan, -1);
             if (lRobot.equals(hmodel.nearFridge[0])) {
-                super.drawAgent(g, x, y, Color.cyan, -1);
+                super.drawAgent(g, x, y, new Color(207, 159, 255), -1);
             }
             g.setColor(Color.black);
             drawString(g, x, y, defaultFont, "Fridge ("+hmodel.availableBeers+")");
             break;
         case HouseModel.OWNER:
+            super.drawAgent(g, x, y, Color.pink, -1);
             if (lRobot.equals(hmodel.nearOwner[0])) {
-                super.drawAgent(g, x, y, Color.pink, -1);
+                super.drawAgent(g, x, y, new Color(207, 159, 255), -1);
             }
             String o = "Owner";
             if (hmodel.sipCount > 0) {
@@ -43,8 +45,9 @@ public class HouseView extends GridWorldView {
             drawString(g, x, y, defaultFont, o);
             break;
         case HouseModel.PICKUP:
+            super.drawAgent(g, x, y, Color.green, -1);
             if (lRobot.equals(hmodel.lPickUp)) {
-                super.drawAgent(g, x, y, Color.green, -1);
+                super.drawAgent(g, x, y, new Color(207, 159, 255), -1);
             }
             g.setColor(Color.black);
             drawString(g, x, y, defaultFont, "Pick up");

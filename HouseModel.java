@@ -21,6 +21,7 @@ public class HouseModel extends GridWorldModel {
     Location lFridge = new Location(0,0);
     Location lOwner  = new Location(GSize-1,GSize-1);
     Location lPickUp = new Location(0,GSize-1);
+    Location lBaseRobot = new Location(GSize/2, GSize/2);
 
     Location[] nearFridge = {new Location(0,1), new Location(1,0)};
     Location[] nearOwner  = {new Location(GSize-1,GSize-2), new Location(GSize-2,GSize-1)};
@@ -31,7 +32,7 @@ public class HouseModel extends GridWorldModel {
 
         // initial location of robot (column 3, line 3)
         // ag code 0 means the robot
-        setAgPos(0, GSize/2, GSize/2);
+        setAgPos(0, lBaseRobot);
 
         // initial location of fridge and owner
         add(FRIDGE, lFridge);
