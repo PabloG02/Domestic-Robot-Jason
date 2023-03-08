@@ -3,8 +3,8 @@
 // Initially, I believe that there is some beer in the fridge.
 available(beer,fridge).
 
-// My owner should not consume more than 5 beers a day.
-limit(beer,5).
+// My owner should not consume more than N beers a day.
+limit(beer,7).
 
 too_much(B) :-
    .date(YY,MM,DD) &
@@ -94,6 +94,9 @@ too_much(B) :-
     +available(beer,fridge);
     .wait(1000);
     !go_at(robot,fridge).
+
++stockRemaining(Product,N)[source(supermarket)] 
+   <- .print("Supermarket can't attend the order due to insufficient stock (",N,") of ", Product).
 
 // When the fridge is opened, the beer stock is perceived
 // and thus the available belief is updated
