@@ -3,6 +3,11 @@ import java.util.Random;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
 
+
+enum DIRECTION {
+    LEFT, RIGHT, DOWN, UP 
+}
+
 /** class that implements the Model of Domestic Robot application */
 public class HouseModel extends GridWorldModel {
 
@@ -12,6 +17,7 @@ public class HouseModel extends GridWorldModel {
     public static final int PICKUP = 64;
     public static final int BIN    = 128;
     public static final int CAN    = 256;
+    public static final int OBSTACLE = 512;
 
     // the grid size
     public static final int GSize = 7;
@@ -28,7 +34,8 @@ public class HouseModel extends GridWorldModel {
     Location lBin    = new Location(GSize-1,0);
     Location lBaseRobot = new Location(GSize/2, GSize/2);
     Location lCan;
-
+    Location[] lObstacles = {new Location(1,0), new Location(1,2), new Location(6,5)};
+    
     public HouseModel() {
         // create a 7x7 grid with one mobile agent
         super(GSize, GSize, 1);
@@ -42,6 +49,9 @@ public class HouseModel extends GridWorldModel {
         add(OWNER, lOwner);
         add(PICKUP, lPickUp);
         add(BIN, lBin);
+        for (Location lObstacle: lObstacles) {
+            add(OBSTACLE, lObstacle);
+        }
     }
 
     boolean openFridge() {
@@ -86,10 +96,36 @@ public class HouseModel extends GridWorldModel {
 
     boolean moveTowardsAdjacent(Location dest) {
         Location r1 = getAgPos(0);
-        if (r1.x < dest.x)        r1.x++;
-        else if (r1.x > dest.x)   r1.x--;
-        if (r1.y < dest.y-1)      r1.y++;
-        else if (r1.y > dest.y+1) r1.y--;
+        boolean locNotValid = true;
+        for(DIRECTION dir: DIRECTION.values()){
+            switch (dir) {
+                case RIGHT:
+                    if (r1.x < dest.x)    r1.x++;
+                    break;
+                case LEFT:
+                    if (r1.x > dest.x)    r1.x--;
+                    break;
+                case DOWN:
+                    if (r1.y < dest.y-1)  r1.y++;
+                    break;
+                case UP:
+                    if (r1.y > dest.y-1)  r1.y--;
+                    break;
+            }
+            System.out.println("Trying X: " + r1.x + " Y: " + r1.y);
+            
+            if (validPosition(r1)) {
+                locNotValid = false;
+                break;
+            } else {
+                r1 = getAgPos(0);
+            }
+        }
+        
+        if(locNotValid){
+            return false;
+        }
+        
         setAgPos(0, r1); // move the robot in the grid
 
         // repaint the fridge and owner locations
@@ -102,6 +138,26 @@ public class HouseModel extends GridWorldModel {
                 view.update(lCan.x,lCan.y);
         }
         return true;
+    }
+
+    private boolean validPosition (Location r1) {
+        // If the position is going to change
+        if(r1.equals(getAgPos(0))){
+            return false;
+        } else {
+            /*boolean different = true;
+            // Check if is different from the one of the obstacle
+            for (Location lObstacle: lObstacles) {
+                if(lObstacle.equals(r1))
+                    different = false;
+            }
+            if (different){
+                different = !(r1.equals(lFridge) || r1.equals(lOwner) || r1.equals(lPickUp) || r1.equals(lBin));
+            }
+
+            return different;*/
+            return true;
+        }
     }
 
     boolean getBeer() {

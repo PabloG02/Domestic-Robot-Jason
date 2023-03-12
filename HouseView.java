@@ -68,6 +68,9 @@ public class HouseView extends GridWorldView {
             g.setColor(Color.black);
             drawString(g, x, y, defaultFont, "Can");
             break;
+        case HouseModel.OBSTACLE:
+            super.drawObstacle(g, x, y);
+            break;
         }
         repaint();
     }
