@@ -12,10 +12,14 @@ public class HouseEnv extends Environment {
     public static final Literal hb  = Literal.parseLiteral("hand_in(beer)");
     public static final Literal sb  = Literal.parseLiteral("sip(beer)");
     public static final Literal hob = Literal.parseLiteral("has(owner,beer)");
+    public static final Literal tc  = Literal.parseLiteral("throwCan");
+    public static final Literal pu  = Literal.parseLiteral("pickUpTrash");
 
     public static final Literal af = Literal.parseLiteral("at(robot,fridge)");
     public static final Literal ao = Literal.parseLiteral("at(robot,owner)");
     public static final Literal ap = Literal.parseLiteral("at(robot,pickup)");
+    public static final Literal abin = Literal.parseLiteral("at(robot,bin)");
+    public static final Literal acan = Literal.parseLiteral("at(robot,can)");
     public static final Literal ab = Literal.parseLiteral("at(robot,base)");
 
     static Logger logger = Logger.getLogger(HouseEnv.class.getName());
@@ -44,14 +48,20 @@ public class HouseEnv extends Environment {
         Location lRobot = model.getAgPos(0);
 
         // add agent location to its percepts
-        if (lRobot.equals(model.nearFridge[0])) {
+        if (lRobot.distanceManhattan(model.lFridge) == 1) {
             addPercept("robot", af);
         }
-        if (lRobot.equals(model.nearOwner[0])) {
+        if (lRobot.distanceManhattan(model.lOwner) == 1) {
             addPercept("robot", ao);
         }
-        if (lRobot.equals(model.lPickUp)) {
+        if (lRobot.distanceManhattan(model.lPickUp) == 1) {
             addPercept("robot", ap);
+        }
+        if (lRobot.distanceManhattan(model.lBin) == 1) {
+            addPercept("robot", abin);
+        }
+        if (model.lCan != null && lRobot.distanceManhattan(model.lCan) == 1) {
+            addPercept("robot", acan);
         }
         if (lRobot.equals(model.lBaseRobot)) {
             addPercept("robot", ab);
@@ -91,6 +101,14 @@ public class HouseEnv extends Environment {
                 adjacent = true;
             } else if (l.equals("pickup")) {
                 dest = model.lPickUp;
+                adjacent = true;
+            } else if (l.equals("bin")) {
+                dest = model.lBin;
+                adjacent = true;
+            } else if (l.equals("can")) {
+                dest = model.lCan;
+                adjacent = true;
+
             } else if (l.equals("base")) {
                 dest = model.lBaseRobot;
             }
@@ -107,8 +125,14 @@ public class HouseEnv extends Environment {
         } else if (action.equals(hb) && ag.equals("robot")) {
             result = model.handInBeer();
 
+        } else if (action.equals(pu) && ag.equals("robot")) {
+            result = model.pickUpTrash();
+
         } else if (action.equals(sb) && ag.equals("owner")) {
             result = model.sipBeer();
+
+        } else if (action.equals(tc) && ag.equals("owner")) {
+            result = model.throwCan();
 
         } else if (action.getFunctor().equals("deliver") && ag.equals("supermarket")) {
             // wait 4 seconds to finish "deliver"

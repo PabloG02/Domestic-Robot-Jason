@@ -1,3 +1,5 @@
+import java.util.Random;
+
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
 
@@ -8,6 +10,8 @@ public class HouseModel extends GridWorldModel {
     public static final int FRIDGE = 16;
     public static final int OWNER  = 32;
     public static final int PICKUP = 64;
+    public static final int BIN    = 128;
+    public static final int CAN    = 256;
 
     // the grid size
     public static final int GSize = 7;
@@ -21,10 +25,9 @@ public class HouseModel extends GridWorldModel {
     Location lFridge = new Location(0,0);
     Location lOwner  = new Location(GSize-1,GSize-1);
     Location lPickUp = new Location(0,GSize-1);
+    Location lBin    = new Location(GSize-1,0);
     Location lBaseRobot = new Location(GSize/2, GSize/2);
-
-    Location[] nearFridge = {new Location(0,1), new Location(1,0)};
-    Location[] nearOwner  = {new Location(GSize-1,GSize-2), new Location(GSize-2,GSize-1)};
+    Location lCan;
 
     public HouseModel() {
         // create a 7x7 grid with one mobile agent
@@ -38,6 +41,7 @@ public class HouseModel extends GridWorldModel {
         add(FRIDGE, lFridge);
         add(OWNER, lOwner);
         add(PICKUP, lPickUp);
+        add(BIN, lBin);
     }
 
     boolean openFridge() {
@@ -73,6 +77,9 @@ public class HouseModel extends GridWorldModel {
             view.update(lFridge.x,lFridge.y);
             view.update(lOwner.x,lOwner.y);
             view.update(lPickUp.x,lPickUp.y);
+            view.update(lBin.x,lBin.y);
+            if(lCan != null)
+                view.update(lCan.x,lCan.y);
         }
         return true;
     }
@@ -90,6 +97,9 @@ public class HouseModel extends GridWorldModel {
             view.update(lFridge.x,lFridge.y);
             view.update(lOwner.x,lOwner.y);
             view.update(lPickUp.x,lPickUp.y);
+            view.update(lBin.x,lBin.y);
+            if(lCan != null)
+                view.update(lCan.x,lCan.y);
         }
         return true;
     }
@@ -134,5 +144,24 @@ public class HouseModel extends GridWorldModel {
         } else {
             return false;
         }
+    }
+
+    boolean throwCan() {
+        Random random = new Random();
+        lCan = new Location(random.nextInt(GSize),random.nextInt(GSize));
+        while(lCan.equals(lBaseRobot) || lCan.equals(lFridge) || lCan.equals(lFridge) || lCan.equals(lPickUp) || lCan.equals(lBin)){
+            lCan = new Location(random.nextInt(GSize),random.nextInt(GSize));
+        }
+
+        add(CAN, lCan);
+
+        return true;
+    }
+
+    boolean pickUpTrash() {
+        remove(CAN, lCan);
+        lCan = null;
+
+        return true;
     }
 }

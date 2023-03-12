@@ -26,7 +26,7 @@ public class HouseView extends GridWorldView {
         switch (object) {
         case HouseModel.FRIDGE:
             super.drawAgent(g, x, y, Color.cyan, -1);
-            if (lRobot.equals(hmodel.nearFridge[0])) {
+            if (lRobot.distanceManhattan(hmodel.lFridge) == 1) {
                 super.drawAgent(g, x, y, new Color(207, 159, 255), -1);
             }
             g.setColor(Color.black);
@@ -34,7 +34,7 @@ public class HouseView extends GridWorldView {
             break;
         case HouseModel.OWNER:
             super.drawAgent(g, x, y, Color.pink, -1);
-            if (lRobot.equals(hmodel.nearOwner[0])) {
+            if (lRobot.distanceManhattan(hmodel.lOwner) == 1) {
                 super.drawAgent(g, x, y, new Color(207, 159, 255), -1);
             }
             String o = "Owner";
@@ -51,6 +51,22 @@ public class HouseView extends GridWorldView {
             }
             g.setColor(Color.black);
             drawString(g, x, y, defaultFont, "Pick up");
+            break;
+        case HouseModel.BIN:
+            super.drawAgent(g, x, y, Color.gray, -1);
+            if (lRobot.distanceManhattan(hmodel.lBin) == 1) {
+                super.drawAgent(g, x, y, new Color(207, 159, 255), -1);
+            }
+            g.setColor(Color.black);
+            drawString(g, x, y, defaultFont, "Bin");
+            break;
+        case HouseModel.CAN:
+            super.drawAgent(g, x, y, Color.red, -1);
+            if (hmodel.lCan != null && lRobot.distanceManhattan(hmodel.lCan) == 1) {
+                super.drawAgent(g, x, y, new Color(207, 159, 255), -1);
+            }
+            g.setColor(Color.black);
+            drawString(g, x, y, defaultFont, "Can");
             break;
         }
         repaint();

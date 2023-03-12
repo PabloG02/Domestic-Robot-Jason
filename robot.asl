@@ -25,7 +25,18 @@ too_much(B) :-
     .wait(2000);
     .println("Robot esperando la petición de Owner.");
     !bringBeer.
-+!bringBeer : asked(beer) & not healthMsg(_) <- 
++!bringBeer : asked(beer) & not healthMsg(_) & threw(beer)[source(A)] <- 
+    .wait(1000);
+    .println("Voy a por la lata");
+    !go_at(robot,can);
+    .wait(1000);
+    pickUpTrash;
+    .println("Tirando la basura antes de ir a la nevera");
+    !go_at(robot,bin);
+    .wait(1000);
+    -threw(beer)[source(A)];
+    !bringBeer.
++!bringBeer : asked(beer) & not healthMsg(_) & not threw(beer) <- 
     .println("Owner me ha pedido una cerveza.");
     !go_at(robot,fridge);
     !take(fridge,beer);

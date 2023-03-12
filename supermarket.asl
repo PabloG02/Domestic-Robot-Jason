@@ -25,7 +25,7 @@ stock(beer, 3).
     -orderFrom(Ag, Product, Qtd);
     !deliverProduct.
 +!deliverProduct : last_order_id(N) & orderFrom(Ag, Product, Qtd) & stock(Product, S) & S < Qtd <-
-    .println("Cannot fulfill order of", Qtd, " ", Product);
+    .println("Cannot fulfill order of ", Qtd, " ", Product);
     .send(Ag, tell, stockRemaining(Product, S));
     -orderFrom(Ag, Product, Qtd);
     !deliverProduct.
